@@ -29,9 +29,32 @@ class App extends Component {
     super();
     this.state = {
       input: '',
-      imageUrl: ''
+      imageUrl: '',
+      box: {}
     };
   }
+
+  calculateFaceLoc = data => {
+    const clarifaiFace =
+      data.outputs[0].data.regions[0].region_info.bounding_box;
+    // dom manupulation
+    // 돔에 직접적으로 접근
+    const image = document.querySelector('.inputimage');
+    const width = Number(image.width);
+    const height = Number(image.height);
+    console.log(width, height);
+    // box의 값을 리턴
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - clarifaiFace.right_col * width,
+      bottomRow: height - clarifaiFace.bottom_row * height
+    };
+  };
+
+  renderDetectBox = box => {
+    this.setState({ box });
+  };
 
   onInputChange = e => {
     // console.log(e.target.value);
@@ -45,18 +68,10 @@ class App extends Component {
       imageUrl: this.state.input
     });
     console.log('click');
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, this.state.input).then(
-      function(response) {
-        // do something with response
-        console.log(
-          response.outputs[0].data.regions[0].region_info.bounding_box
-        );
-      },
-      function(err) {
-        // there was an error
-      }
-    );
-    // 3c37a4ac169b4c5f837b1a572be63bdd
+    app.models
+      .predict(Clarifai.FACE_DETECT_MODEL, this.state.input)
+      .then(response => this.renderDetectBox(this.calculateFaceLoc(response)))
+      .catch(err => console.log(err));
   };
 
   render() {
