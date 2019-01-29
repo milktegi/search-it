@@ -28,35 +28,41 @@ class App extends Component {
   state = {
     input: '',
     imageUrl: '',
-    box: {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0
-    }
+    boxes: [
+      {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0
+      }
+    ]
   };
 
   calculateFaceLoc = data => {
-    const clarifaiFace =
-      data.outputs[0].data.regions[0].region_info.bounding_box;
-    // dom manupulation
-    // 돔에 직접적으로 접근
-    const image = document.getElementById('inputimage');
-    const width = Number(image.width);
-    const height = Number(image.height);
-    console.log(width, height);
-    // box의 값을 리턴
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - clarifaiFace.right_col * width,
-      bottomRow: height - clarifaiFace.bottom_row * height
-    };
+    // 배열로 전환
+    return data.outputs[0].data.regions.map(face => {
+      const detection = face.region_info.bounding_box;
+
+      // dom manupulation
+      // 돔에 직접적으로 접근
+      const image = document.getElementById('inputimage');
+      const width = Number(image.width);
+      const height = Number(image.height);
+      console.log(width, height);
+      // box의 값을 리턴
+      return {
+        leftCol: detection.left_col * width,
+        topRow: detection.top_row * height,
+        rightCol: width - detection.right_col * width,
+        bottomRow: height - detection.bottom_row * height
+      };
+    });
+
   };
 
-  renderDetectBox = box => {
-    console.log(box);
-    this.setState({ box: box });
+  renderDetectBox = boxes => {
+    console.log(boxes);
+    this.setState({ boxes: boxes });
   };
 
   onInputChange = e => {
@@ -91,7 +97,10 @@ class App extends Component {
           onInputChange={onInputChange}
         />
 
-        <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
+        <FaceRecognition
+          box={this.state.boxes}
+          imageUrl={this.state.imageUrl}
+        />
       </div>
     );
   }
