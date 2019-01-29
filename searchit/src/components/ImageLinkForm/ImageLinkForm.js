@@ -4,11 +4,11 @@ import './ImageLinkForm.css';
 const ImageLinkForm = () => {
   return (
     <div>
-      <p className="f3">{'사진을 검색하면 얼굴 인식을 시작합니다.'}</p>
+      <p className="f4">{'사진을 검색하면 얼굴 인식을 시작합니다.'}</p>
       <div className="center">
-        <div className="form center pa4 br3 shadow-5">
+        <div className="form center pa4 br3 shadow-3">
           <input className="f4 pa2 w-70 center" type="tex" />
-          <button className="w-30 grow f4 link ph3 pv2 dib black bg-light-gray">
+          <button className="button w-30 grow f4 link blue bg-white">
             검색
           </button>
         </div>
