@@ -25,21 +25,23 @@ const particlesOption = {
 };
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {}
-    };
-  }
+  state = {
+    input: '',
+    imageUrl: '',
+    box: {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0
+    }
+  };
 
   calculateFaceLoc = data => {
     const clarifaiFace =
       data.outputs[0].data.regions[0].region_info.bounding_box;
     // dom manupulation
     // 돔에 직접적으로 접근
-    const image = document.querySelector('.inputimage');
+    const image = document.getElementById('inputimage');
     const width = Number(image.width);
     const height = Number(image.height);
     console.log(width, height);
@@ -53,7 +55,8 @@ class App extends Component {
   };
 
   renderDetectBox = box => {
-    this.setState({ box });
+    console.log(box);
+    this.setState({ box: box });
   };
 
   onInputChange = e => {
@@ -88,7 +91,7 @@ class App extends Component {
           onInputChange={onInputChange}
         />
 
-        <FaceRecognition imageUrl={this.state.imageUrl} />
+        <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl} />
       </div>
     );
   }
